@@ -1,13 +1,27 @@
-# React Popover / React Tooltip
+# React Popover
 
--   Easy to use React Popover.
--   No more need to create ID or Ref to use tooltip!
--   User has full control over the content wrapper, no additional styles have been added
+A lightweight and flexible React Popover / Tooltip component.
 
-How to Use:
+-   ⚡ **No ID or Ref needed** — just wrap and go!
+-   🎨 **Full control** — no default styles applied to your content.
+-   🧠 **Simple API** — intuitive props for easy customization.
+
+---
+
+## 🚀 Installation
+
+```bash
+npm install @theprojectsx/react-popover
+# or
+yarn add @theprojectsx/react-popover
+```
+
+---
+
+## 💡 Usage
 
 ```jsx
-import Popover from "@/components/Popover";
+import Popover from "@theprojectsx/react-popover";
 
 const Page = () => {
     return (
@@ -28,16 +42,24 @@ const Page = () => {
 export default Page;
 ```
 
-## API:
+---
 
--   `content`: Expects content which will be shown
--   `className`: Class names which can be given to the `content` wrapper
--   `parentStyles`: Styles to give parent Element. Not classnames, but React.CSSProperties!
--   `position`: In which position the `content` will be shown. Options:
-    -   `top`, `bottom` (default), `left`, `right`
--   `axis`: In which axis will the content be shown. Options:
-    -   `center` (Default), `top`, `bottom`, `left`, `right`
--   `triggerType`: Should the Popover be triggered `auto` or `manual`. Manual type will require below property also:
--   `contentVisible`: If the `content` is visible or not. Expects Boolean (Default `false`)
--   `onWrapperBlur`: Takes a function as an property. Runs when user clicks outside the Popover wrapper
--   `viewOnHover`: Views content when hover-ed on trigger, instead of click. Expects Boolean (Default `true`)
+## ⚙️ Props
+
+| Prop             | Type                                                 | Default    | Description                                                        |
+| ---------------- | ---------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
+| `content`        | `React.ReactNode`                                    | —          | Content to show inside the popover                                 |
+| `className`      | `string`                                             | —          | Class for the content wrapper                                      |
+| `parentStyles`   | `React.CSSProperties`                                | —          | Inline styles for the parent element                               |
+| `position`       | `"top" \| "bottom" \| "left" \| "right"`             | `"bottom"` | Where the popover appears relative to trigger                      |
+| `axis`           | `"center" \| "top" \| "bottom" \| "left" \| "right"` | `"center"` | Axis alignment of the popover                                      |
+| `triggerType`    | `"auto" \| "manual"`                                 | `"auto"`   | Whether to trigger on interaction or control manually              |
+| `contentVisible` | `boolean`                                            | `false`    | Show/hide popover manually (used when `triggerType` is `"manual"`) |
+| `onWrapperBlur`  | `() => void`                                         | —          | Called when user clicks outside the popover                        |
+| `viewOnHover`    | `boolean`                                            | `true`     | Show popover on hover instead of click (only in `auto` mode)       |
+
+---
+
+## 🧪 License
+
+MIT © [@theprojectsx](https://github.com/theprojectsx)

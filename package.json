@@ -1,6 +1,6 @@
 {
     "name": "@theprojectsx/react-popover",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Single tool to use Popover and Tooltip in React",
     "keywords": [
         "react",
