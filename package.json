@@ -1,0 +1,49 @@
+{
+    "name": "@theprojectsx/react-popover",
+    "version": "1.0.0",
+    "description": "Single tool to use Popover and Tooltip in React",
+    "keywords": [
+        "react",
+        "react-popover",
+        "react-dropdown",
+        "tooltip",
+        "react-tooltip"
+    ],
+    "homepage": "https://github.com/TheProjectsX/react-popover#readme",
+    "bugs": {
+        "url": "https://github.com/TheProjectsX/react-popover/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/TheProjectsX/react-popover.git"
+    },
+    "license": "MIT",
+    "author": "TheProjectsX",
+    "type": "module",
+    "main": "dist/index.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "rollup -c --bundleConfigAsCjs",
+        "postbuild": "cp src/index.d.ts dist/index.d.ts"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.27.1",
+        "@babel/preset-env": "^7.27.2",
+        "@babel/preset-react": "^7.27.1",
+        "@rollup/plugin-babel": "^6.0.4",
+        "@rollup/plugin-commonjs": "^28.0.3",
+        "@rollup/plugin-node-resolve": "^16.0.1",
+        "@rollup/plugin-terser": "^0.4.4",
+        "rollup": "^4.41.0",
+        "rollup-plugin-peer-deps-external": "^2.2.4",
+        "rollup-plugin-postcss": "^4.0.2"
+    },
+    "peerDependencies": {
+        "react": ">=16.8",
+        "react-dom": ">=16.8"
+    }
+}

@@ -1,0 +1,44 @@
+/* CSS for React Popover (X) */
+
+/* Container */
+.rpx__container {
+    width: fit-content;
+    position: relative;
+}
+
+/* Content */
+.rpx__content {
+    width: max-content;
+    position: absolute;
+    opacity: 0;
+    z-index: 999;
+}
+
+.rpx__content--hover-opened {
+    transition: opacity 200ms;
+}
+
+/* This is for Hover effect (Tooltip). If trigger hovered / focused, wrapper hover / focused-within, content hovered / focused: opacity 100% */
+.rpx__trigger:hover ~ .rpx__content--hover-opened,
+.rpx__trigger:focus ~ .rpx__content--hover-opened,
+.rpx__container:hover .rpx__content--hover-opened,
+.rpx__container:focus-within .rpx__content--hover-opened,
+.rpx__content--hover-opened:hover,
+.rpx__content--hover-opened:focus {
+    opacity: 100% !important;
+}
+
+/* Indicator */
+.rpx__indicator {
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: white;
+    position: absolute;
+    rotate: 45deg;
+    z-index: -10;
+}
+
+/* Utility */
+.rpx--visible-important {
+    opacity: 100% !important;
+}
