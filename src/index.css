@@ -10,12 +10,22 @@
 .rpx__content {
     width: max-content;
     position: absolute;
-    opacity: 0;
     z-index: 999;
 }
 
 .rpx__content--hover-opened {
-    transition: opacity 200ms;
+    transition-property: opacity visibility;
+    transition-delay: 200ms;
+}
+
+.rpx__content-invisible {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.rpx__content-visible {
+    visibility: visible;
+    opacity: 100;
 }
 
 /* This is for Hover effect (Tooltip). If trigger hovered / focused, wrapper hover / focused-within, content hovered / focused: opacity 100% */
@@ -25,7 +35,8 @@
 .rpx__container:focus-within .rpx__content--hover-opened,
 .rpx__content--hover-opened:hover,
 .rpx__content--hover-opened:focus {
-    opacity: 100% !important;
+    visibility: visible;
+    opacity: 100%;
 }
 
 /* Indicator */
@@ -36,9 +47,4 @@
     position: absolute;
     rotate: 45deg;
     z-index: -10;
-}
-
-/* Utility */
-.rpx--visible-important {
-    opacity: 100% !important;
 }

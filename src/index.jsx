@@ -10,7 +10,7 @@ const Popover = ({
     axis = "center",
     triggerType = "auto",
     contentVisible = false,
-    onWrapperBlur = () => {},
+    onWrapperBlur = (e) => {},
     viewOnHover = false,
     closeOnClick = true,
 }) => {
@@ -33,7 +33,7 @@ const Popover = ({
         onClick: () =>
             triggerType === "auto"
                 ? setPopoverOpened((prev) => (closeOnClick ? !prev : prev))
-                : null,
+                : children.props.onClick(),
     });
 
     const calculatePosition = (position, gap, triggerRect, contentRect) => {
@@ -198,7 +198,7 @@ const Popover = ({
                 if (triggerType === "auto") {
                     setPopoverOpened(false);
                 }
-                onWrapperBlur();
+                onWrapperBlur(e);
             } else if (
                 contentRef.current &&
                 contentRef.current.contains(target) &&
@@ -226,20 +226,19 @@ const Popover = ({
             ref={wrapperRef}
         >
             {clonedTrigger}
-
             <div
                 data-name="popover-content"
                 className={`rpx__content
                     ${
                         triggerType === "auto"
                             ? viewOnHover
-                                ? "rpx__content--hover-opened"
+                                ? "rpx__content-invisible rpx__content--hover-opened"
                                 : popoverOpened
-                                ? "rpx--visible-important"
-                                : ""
+                                ? "rpx__content-visible"
+                                : "rpx__content-invisible"
                             : contentVisible
-                            ? "rpx--visible-important"
-                            : ""
+                            ? "rpx__content-visible"
+                            : "rpx__content-invisible"
                     }
                     ${className || ""}`}
                 style={popoverStyle.content}
