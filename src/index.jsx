@@ -13,6 +13,7 @@ const Popover = ({
     onWrapperBlur = (e) => {},
     viewOnHover = false,
     closeOnClick = true,
+    gap = 10,
 }) => {
     const [popoverOpened, setPopoverOpened] = useState(false);
 
@@ -92,7 +93,6 @@ const Popover = ({
     };
 
     const updatePositions = () => {
-        const gap = 10;
         const indicatorGap = 6;
         const triggerRect = triggerRef.current?.getBoundingClientRect();
         const contentRect = contentRef.current?.getBoundingClientRect();
