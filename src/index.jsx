@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import "./index.css";
 
 const Popover = ({
@@ -13,7 +14,7 @@ const Popover = ({
     onWrapperBlur = (e) => {},
     viewOnHover = false,
     closeOnClick = true,
-    gap = 10,
+    gap = 8,
 }) => {
     const [popoverOpened, setPopoverOpened] = useState(false);
 
@@ -23,7 +24,6 @@ const Popover = ({
 
     const [popoverStyle, setPopoverStyle] = useState({
         content: {},
-        indicator: {},
     });
 
     const clonedTrigger = React.cloneElement(children, {
@@ -33,8 +33,16 @@ const Popover = ({
         tabIndex: 0,
         onClick: () =>
             triggerType === "auto"
-                ? setPopoverOpened((prev) => (closeOnClick ? !prev : prev))
-                : children.props.onClick(),
+                ? setPopoverOpened((prev) => (closeOnClick ? !prev : true))
+                : children.props.onClick?.(),
+        onMouseEnter: () =>
+            viewOnHover
+                ? setPopoverOpened(true)
+                : children.props.onMouseEnter?.(),
+        onMouseLeave: () =>
+            viewOnHover
+                ? setPopoverOpened(false)
+                : children.props.onMouseLeave?.(),
     });
 
     const calculatePosition = (position, gap, triggerRect, contentRect) => {
@@ -93,31 +101,24 @@ const Popover = ({
     };
 
     const updatePositions = () => {
-        const indicatorGap = 6;
         const triggerRect = triggerRef.current?.getBoundingClientRect();
         const contentRect = contentRef.current?.getBoundingClientRect();
 
         if (!triggerRect || !contentRect) return;
 
-        const contentWidth = contentRect?.width ?? 0;
-        const contentHeight = contentRect?.height ?? 0;
         const triggerWidth = triggerRect?.width ?? 0;
         const triggerHeight = triggerRect?.height ?? 0;
+        const triggerPos = {
+            top: triggerRect?.top ?? 0,
+            bottom: triggerRect?.bottom ?? 0,
+            left: triggerRect?.left ?? 0,
+            right: triggerRect?.right ?? 0,
+        };
+
+        const contentWidth = contentRect?.width ?? 0;
+        const contentHeight = contentRect?.height ?? 0;
 
         const popoverContentStyles = {};
-        const popoverIndicatorStyles = {};
-
-        const size =
-            position === "top" || position === "bottom"
-                ? triggerHeight ?? 0
-                : triggerWidth ?? 0;
-
-        const oppositeSide = {
-            top: "bottom",
-            bottom: "top",
-            left: "right",
-            right: "left",
-        };
 
         const finalPosition = calculatePosition(
             position,
@@ -126,44 +127,58 @@ const Popover = ({
             contentRect
         );
 
-        popoverIndicatorStyles[oppositeSide[finalPosition]] = `${
-            indicatorGap * -1
-        }px`;
-        popoverContentStyles[oppositeSide[finalPosition]] = `${size + gap}px`;
+        const isVertical = ["top", "bottom"].includes(finalPosition);
+        let relativePos;
 
-        const oppositeAxis = {
-            top: ["top", "bottom"],
-            bottom: ["top", "bottom"],
-            left: ["left", "right"],
-            right: ["left", "right"],
-            center: ["center"],
-        };
-
-        const sameAxis = oppositeAxis[axis]?.includes(position);
-        const axisToUse = axis === "center" || sameAxis ? "center" : axis;
-
-        if (axisToUse === "center") {
-            const isVertical = position === "top" || position === "bottom";
-            const offset = isVertical
-                ? contentWidth / 2 - triggerWidth / 2
-                : contentHeight / 2 - triggerHeight / 2;
-
-            const key = isVertical ? "left" : "top";
-            const centerIndicatorOffset = isVertical
-                ? contentWidth / 2 - 8
-                : contentHeight / 2 - 8;
-
-            popoverContentStyles[key] = `${-offset}px`;
-            popoverIndicatorStyles[key] = `${centerIndicatorOffset}px`;
-        } else {
-            popoverContentStyles[axisToUse] = "0px";
-            popoverIndicatorStyles[axisToUse] = `${indicatorGap}px`;
+        if (finalPosition === "top") {
+            relativePos = triggerPos.top - contentHeight - gap;
+        } else if (finalPosition === "bottom") {
+            relativePos = triggerPos.bottom + gap;
+        } else if (finalPosition === "left") {
+            relativePos = triggerPos.left - contentWidth - gap;
+        } else if (finalPosition === "right") {
+            relativePos = triggerPos.right + gap;
         }
 
-        setPopoverStyle((prev) => ({
+        popoverContentStyles[isVertical ? "top" : "left"] = `${relativePos}px`;
+
+        const isSameAxis =
+            (["top", "bottom"].includes(position) &&
+                ["top", "bottom"].includes(axis)) ||
+            (["left", "right"].includes(position) &&
+                ["left", "right"].includes(axis));
+
+        const axisToUse = axis === "center" || isSameAxis ? "center" : axis;
+
+        let relativeAxis;
+
+        if (axisToUse === "top") {
+            relativeAxis = triggerPos.top;
+        } else if (axisToUse === "bottom") {
+            relativeAxis = triggerPos.bottom - contentHeight;
+        } else if (axisToUse === "left") {
+            relativeAxis = triggerPos.left;
+        } else if (axisToUse === "right") {
+            relativeAxis = triggerPos.right - contentWidth;
+        }
+
+        if (axisToUse === "center") {
+            const key = isVertical ? "left" : "top";
+
+            const offset = isVertical
+                ? triggerPos.left + triggerWidth / 2 - contentWidth / 2
+                : triggerPos.top + triggerHeight / 2 - contentHeight / 2;
+
+            popoverContentStyles[key] = `${offset}px`;
+        } else {
+            popoverContentStyles[
+                ["top", "bottom"].includes(axisToUse) ? "top" : "left"
+            ] = `${relativeAxis}px`;
+        }
+
+        setPopoverStyle({
             content: popoverContentStyles,
-            indicator: popoverIndicatorStyles,
-        }));
+        });
     };
 
     useLayoutEffect(() => {
@@ -226,27 +241,25 @@ const Popover = ({
             ref={wrapperRef}
         >
             {clonedTrigger}
-            <div
-                data-name="popover-content"
-                className={`rpx__content
-                    ${
-                        triggerType === "auto"
-                            ? viewOnHover
-                                ? "rpx__content-invisible rpx__content--hover-opened"
-                                : popoverOpened
-                                ? "rpx__content-visible"
-                                : "rpx__content-invisible"
+
+            {createPortal(
+                <div
+                    data-name="popover-content"
+                    className={`rpx__content ${triggerType === "auto"
+                            ? "rpx__content--visible-controlled"
                             : contentVisible
-                            ? "rpx__content-visible"
-                            : "rpx__content-invisible"
-                    }
-                    ${className || ""}`}
-                style={popoverStyle.content}
-                ref={contentRef}
-                tabIndex={0}
-            >
-                {content ?? ""}
-            </div>
+                            ? "rpx__content--visible"
+                            : "rpx__content--invisible"
+                    } ${viewOnHover ? "rpx__content--on-hover" : ""} ${className}`}
+                    style={popoverStyle.content}
+                    ref={contentRef}
+                    data-popover-visible={popoverOpened}
+                    tabIndex={0}
+                >
+                    {content ?? ""}
+                </div>,
+                document.body
+            )}
         </div>
     );
 };

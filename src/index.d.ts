@@ -11,6 +11,7 @@ export interface PopoverProps {
     contentVisible?: boolean;
     onWrapperBlur?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     viewOnHover?: boolean;
+    closeOnClick?: boolean;
     gap?: number;
 }
 

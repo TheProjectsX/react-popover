@@ -57,6 +57,7 @@ export default Page;
 | `contentVisible` | `boolean`                                            | `false`    | Show/hide popover manually (used when `triggerType` is `"manual"`) |
 | `onWrapperBlur`  | `() => void`                                         | —          | Called when user clicks outside the popover                        |
 | `viewOnHover`    | `boolean`                                            | `true`     | Show popover on hover instead of click (only in `auto` mode)       |
+| `closeOnClick`   | `boolean`                                            | `true`     | Close Popover when clicked in trigger                              |
 | `gap`            | `number`                                             | `10`       | Used to decide the gap between trigger and content                 |
 
 ---

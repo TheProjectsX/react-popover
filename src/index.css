@@ -13,30 +13,37 @@
     z-index: 999;
 }
 
-.rpx__content--hover-opened {
-    transition-property: opacity visibility;
-    transition-delay: 200ms;
-}
-
-.rpx__content-invisible {
+.rpx__content--invisible {
     visibility: hidden;
     opacity: 0;
 }
 
-.rpx__content-visible {
+.rpx__content--visible {
     visibility: visible;
     opacity: 100;
 }
 
-/* This is for Hover effect (Tooltip). If trigger hovered / focused, wrapper hover / focused-within, content hovered / focused: opacity 100% */
-.rpx__trigger:hover ~ .rpx__content--hover-opened,
-.rpx__trigger:focus ~ .rpx__content--hover-opened,
-.rpx__container:hover .rpx__content--hover-opened,
-.rpx__container:focus-within .rpx__content--hover-opened,
-.rpx__content--hover-opened:hover,
-.rpx__content--hover-opened:focus {
+.rpx__content--visible-controlled {
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* We will control the visibility of the content using `data-popover-visible` */
+.rpx__content--visible-controlled[data-popover-visible="true"] {
+    visibility: visible;
+    opacity: 100;
+}
+
+.rpx__content--visible-controlled:hover,
+.rpx__content--visible-controlled:focus {
     visibility: visible;
     opacity: 100%;
+}
+
+/* Transition only if `hover` effect on session */
+.rpx__content--on-hover {
+    transition-property: opacity, visibility;
+    transition-delay: 150ms;
 }
 
 /* Indicator */
