@@ -190,6 +190,14 @@ const Popover = ({
         triggerRef.current && resizeObserver.observe(triggerRef.current);
         contentRef.current && resizeObserver.observe(contentRef.current);
 
+        const mutationObserver = new MutationObserver(updatePositions);
+        mutationObserver.observe(document.body, {
+            attributes: true,
+            childList: true,
+            subtree: true,
+            characterData: true,
+        });
+
         window.addEventListener("resize", updatePositions);
         window.addEventListener("scroll", updatePositions, true);
 
@@ -197,6 +205,7 @@ const Popover = ({
 
         return () => {
             resizeObserver.disconnect();
+            mutationObserver.disconnect();
             window.removeEventListener("resize", updatePositions);
             window.removeEventListener("scroll", updatePositions, true);
         };
@@ -236,18 +245,11 @@ const Popover = ({
         };
     }, [popoverOpened, contentVisible, triggerType]);
 
+
     // Set Mounted so that we can use `document`
     useEffect(() => {
         setMounted(true);
     }, []);
-
-    // Update position if `content` and `wrapper` element exists
-    useEffect(() => {
-        if (!contentRef.current || !wrapperRef.current) return;
-
-        updatePositions();
-    }, [contentRef.current, wrapperRef.current]);
-
     return (
         <div
             data-name="popover-container"
