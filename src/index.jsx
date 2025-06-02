@@ -16,6 +16,7 @@ const Popover = ({
     closeOnClick = true,
     gap = 8,
 }) => {
+    const [mounted, setMounted] = useState(null);
     const [popoverOpened, setPopoverOpened] = useState(false);
 
     const wrapperRef = useRef(null);
@@ -23,7 +24,10 @@ const Popover = ({
     const contentRef = useRef(null);
 
     const [popoverStyle, setPopoverStyle] = useState({
-        content: {},
+        content: {
+            top: 0,
+            left: 0,
+        },
     });
 
     const clonedTrigger = React.cloneElement(children, {
@@ -232,6 +236,18 @@ const Popover = ({
         };
     }, [popoverOpened, contentVisible, triggerType]);
 
+    // Set Mounted so that we can use `document`
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Update position if `content` and `wrapper` element exists
+    useEffect(() => {
+        if (!contentRef.current || !wrapperRef.current) return;
+
+        updatePositions();
+    }, [contentRef.current, wrapperRef.current]);
+
     return (
         <div
             data-name="popover-container"
@@ -242,24 +258,28 @@ const Popover = ({
         >
             {clonedTrigger}
 
-            {createPortal(
-                <div
-                    data-name="popover-content"
-                    className={`rpx__content ${triggerType === "auto"
-                            ? "rpx__content--visible-controlled"
-                            : contentVisible
-                            ? "rpx__content--visible"
-                            : "rpx__content--invisible"
-                    } ${viewOnHover ? "rpx__content--on-hover" : ""} ${className}`}
-                    style={popoverStyle.content}
-                    ref={contentRef}
-                    data-popover-visible={popoverOpened}
-                    tabIndex={0}
-                >
-                    {content ?? ""}
-                </div>,
-                document.body
-            )}
+            {mounted &&
+                createPortal(
+                    <div
+                        data-name="popover-content"
+                        className={`rpx__content ${
+                            triggerType === "auto"
+                                ? "rpx__content--visible-controlled"
+                                : contentVisible
+                                ? "rpx__content--visible"
+                                : "rpx__content--invisible"
+                        } ${
+                            viewOnHover ? "rpx__content--on-hover" : ""
+                        } ${className}`}
+                        style={popoverStyle.content}
+                        ref={contentRef}
+                        data-popover-visible={popoverOpened}
+                        tabIndex={0}
+                    >
+                        {content ?? ""}
+                    </div>,
+                    document.body
+                )}
         </div>
     );
 };
