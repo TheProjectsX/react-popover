@@ -62,19 +62,26 @@ const Popover = ({
 
         const possiblePositions = [];
 
-        if (triggerRect.top - gap - contentRect.height > 0) {
+        const startingPos = {
+            top: triggerRect.top - gap - contentRect.height,
+            bottom: triggerRect.bottom + gap + contentRect.height,
+            left: triggerRect.left - gap - contentRect.width,
+            right: triggerRect.right + gap + contentRect.width,
+        };
+
+        if (startingPos.top > 0) {
             possiblePositions.push("top");
         }
 
-        if (triggerRect.bottom + gap + contentRect.height < innerHeight) {
+        if (startingPos.bottom < innerHeight) {
             possiblePositions.push("bottom");
         }
 
-        if (triggerRect.left - gap - contentRect.width > 0) {
+        if (startingPos.left > 0) {
             possiblePositions.push("left");
         }
 
-        if (triggerRect.right + gap + contentRect.width < innerWidth) {
+        if (startingPos.right < innerWidth) {
             possiblePositions.push("right");
         }
 
@@ -86,22 +93,80 @@ const Popover = ({
         if (possiblePositions.length > 0) return possiblePositions[0];
 
         if (position === "top" || position === "bottom") {
-            const topSpace = triggerRect.top - gap - contentRect.height;
-            const bottomSpace =
-                innerHeight - triggerRect.bottom + gap + contentRect.height;
+            const topSpace = startingPos.top;
+            const bottomSpace = innerHeight - startingPos.bottom;
 
             return topSpace < bottomSpace ? "top" : "bottom";
         }
 
         if (position === "left" || position === "right") {
-            const leftSpace = triggerRect.left - gap - contentRect.width;
-            const rightSpace =
-                innerWidth - triggerRect.right + gap + contentRect.width;
+            const leftSpace = startingPos.left;
+            const rightSpace = innerWidth - startingPos.right;
 
             return leftSpace < rightSpace ? "left" : "right";
         }
 
         return position;
+    };
+
+    const calculateAxis = (axis, triggerRect, contentRect) => {
+        const innerWidth = window.innerWidth;
+        const innerHeight = window.innerHeight;
+
+        const oppositePosition = {
+            top: "bottom",
+            bottom: "top",
+            left: "right",
+            right: "left",
+        };
+
+        const possiblePositions = [];
+
+        const endingPos = {
+            top: triggerRect.top + contentRect.height,
+            bottom: triggerRect.bottom - contentRect.height,
+            left: triggerRect.left + contentRect.width,
+            right: triggerRect.right - contentRect.width,
+        };
+
+        if (endingPos.top < innerHeight) {
+            possiblePositions.push("top");
+        }
+
+        if (endingPos.bottom > 0) {
+            possiblePositions.push("bottom");
+        }
+
+        if (endingPos.left < innerWidth) {
+            possiblePositions.push("left");
+        }
+
+        if (endingPos.right > 0) {
+            possiblePositions.push("right");
+        }
+
+        if (possiblePositions.includes(axis)) return axis;
+
+        if (possiblePositions.includes(oppositePosition[axis]))
+            return oppositePosition[axis];
+
+        if (possiblePositions.length > 0) return possiblePositions[0];
+
+        if (axis === "top" || axis === "bottom") {
+            const topSpace = innerHeight - endingPos.top;
+            const bottomSpace = endingPos.bottom;
+
+            return topSpace < bottomSpace ? "top" : "bottom";
+        }
+
+        if (axis === "left" || axis === "right") {
+            const leftSpace = innerWidth - endingPos.left;
+            const rightSpace = endingPos.right;
+
+            return leftSpace < rightSpace ? "left" : "right";
+        }
+
+        return axis;
     };
 
     const updatePositions = () => {
@@ -152,7 +217,7 @@ const Popover = ({
             (["left", "right"].includes(position) &&
                 ["left", "right"].includes(axis));
 
-        const axisToUse = axis === "center" || isSameAxis ? "center" : axis;
+        const axisToUse = axis === "center" || isSameAxis ? "center" : calculateAxis(axis, triggerRect, contentRect);
 
         let relativeAxis;
 
@@ -244,7 +309,6 @@ const Popover = ({
             document.removeEventListener("click", handleWindowClick);
         };
     }, [popoverOpened, contentVisible, triggerType]);
-
 
     // Set Mounted so that we can use `document`
     useEffect(() => {
