@@ -169,6 +169,15 @@ const Popover = ({
         return axis;
     };
 
+    const isEqual = (obj1, obj2) => {
+        const keys1 = Object.keys(obj1);
+        const keys2 = Object.keys(obj2);
+        if (keys1.length !== keys2.length) return false;
+        return keys1.every(
+            (key) => obj2.hasOwnProperty(key) && obj1[key] === obj2[key]
+        );
+    };
+
     const updatePositions = () => {
         const triggerRect = triggerRef.current?.getBoundingClientRect();
         const contentRect = contentRef.current?.getBoundingClientRect();
@@ -217,7 +226,10 @@ const Popover = ({
             (["left", "right"].includes(position) &&
                 ["left", "right"].includes(axis));
 
-        const axisToUse = axis === "center" || isSameAxis ? "center" : calculateAxis(axis, triggerRect, contentRect);
+        const axisToUse =
+            axis === "center" || isSameAxis
+                ? "center"
+                : calculateAxis(axis, triggerRect, contentRect);
 
         let relativeAxis;
 
@@ -245,9 +257,15 @@ const Popover = ({
             ] = `${relativeAxis}px`;
         }
 
-        setPopoverStyle({
-            content: popoverContentStyles,
-        });
+        if (popoverStyle.content === popoverContentStyles) {
+            return;
+        }
+
+        setPopoverStyle((prev) =>
+            isEqual(prev.content, popoverContentStyles)
+                ? prev
+                : { content: popoverContentStyles }
+        );
     };
 
     useLayoutEffect(() => {
@@ -314,6 +332,8 @@ const Popover = ({
     useEffect(() => {
         setMounted(true);
     }, []);
+
+
     return (
         <div
             data-name="popover-container"
