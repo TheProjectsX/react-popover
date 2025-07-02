@@ -9,7 +9,7 @@
 /* Content */
 .rpx__content {
     width: max-content;
-    position: absolute;
+    position: fixed;
     z-index: 999;
 }
 

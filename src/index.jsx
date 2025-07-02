@@ -257,10 +257,6 @@ const Popover = ({
             ] = `${relativeAxis}px`;
         }
 
-        if (popoverStyle.content === popoverContentStyles) {
-            return;
-        }
-
         setPopoverStyle((prev) =>
             isEqual(prev.content, popoverContentStyles)
                 ? prev
@@ -332,7 +328,6 @@ const Popover = ({
     useEffect(() => {
         setMounted(true);
     }, []);
-
 
     return (
         <div
