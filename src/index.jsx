@@ -11,9 +11,10 @@ const Popover = ({
     axis = "center",
     triggerType = "auto",
     contentVisible = false,
-    onWrapperBlur = (e) => {},
     viewOnHover = false,
     closeOnClick = true,
+    onWrapperBlur = (e) => {},
+    onStatusChanged = (status) => {},
     gap = 8,
 }) => {
     const [mounted, setMounted] = useState(null);
@@ -33,7 +34,7 @@ const Popover = ({
     const clonedTrigger = React.cloneElement(children, {
         ref: triggerRef,
         className: `${children.props.className || ""} rpx__trigger`,
-        "data-name": "popover-trigger",
+        "data-rpx__name": "popover-trigger",
         tabIndex: 0,
         onClick: () =>
             triggerType === "auto"
@@ -329,9 +330,14 @@ const Popover = ({
         setMounted(true);
     }, []);
 
+    // On Status Changed
+    useEffect(() => {
+        onStatusChanged(popoverOpened);
+    }, [popoverOpened]);
+
     return (
         <div
-            data-name="popover-container"
+            data-rpx__name="popover-container"
             className="rpx__container"
             tabIndex={-1}
             style={parentStyles}
@@ -342,7 +348,7 @@ const Popover = ({
             {mounted &&
                 createPortal(
                     <div
-                        data-name="popover-content"
+                        data-rpx__name="popover-content"
                         className={`rpx__content ${
                             triggerType === "auto"
                                 ? "rpx__content--visible-controlled"

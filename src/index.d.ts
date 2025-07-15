@@ -9,9 +9,10 @@ export interface PopoverProps {
     axis?: "top" | "bottom" | "left" | "right" | "center";
     triggerType?: "auto" | "manual";
     contentVisible?: boolean;
-    onWrapperBlur?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     viewOnHover?: boolean;
     closeOnClick?: boolean;
+    onWrapperBlur?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onStatusChanged?: (status: boolean) => void;
     gap?: number;
 }
 

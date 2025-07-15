@@ -46,19 +46,20 @@ export default Page;
 
 ## ⚙️ Props
 
-| Prop             | Type                                                 | Default    | Description                                                        |
-| ---------------- | ---------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
-| `content`        | `React.ReactNode`                                    | —          | Content to show inside the popover                                 |
-| `className`      | `string`                                             | —          | Class for the content wrapper                                      |
-| `parentStyles`   | `React.CSSProperties`                                | —          | Inline styles for the parent element                               |
-| `position`       | `"top" \| "bottom" \| "left" \| "right"`             | `"bottom"` | Where the popover appears relative to trigger                      |
-| `axis`           | `"center" \| "top" \| "bottom" \| "left" \| "right"` | `"center"` | Axis alignment of the popover                                      |
-| `triggerType`    | `"auto" \| "manual"`                                 | `"auto"`   | Whether to trigger on interaction or control manually              |
-| `contentVisible` | `boolean`                                            | `false`    | Show/hide popover manually (used when `triggerType` is `"manual"`) |
-| `onWrapperBlur`  | `() => void`                                         | —          | Called when user clicks outside the popover                        |
-| `viewOnHover`    | `boolean`                                            | `true`     | Show popover on hover instead of click (only in `auto` mode)       |
-| `closeOnClick`   | `boolean`                                            | `true`     | Close Popover when clicked in trigger                              |
-| `gap`            | `number`                                             | `10`       | Used to decide the gap between trigger and content                 |
+| Prop              | Type                                                 | Default    | Description                                                        |
+| ----------------- | ---------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
+| `content`         | `React.ReactNode`                                    | —          | Content to show inside the popover                                 |
+| `className`       | `string`                                             | —          | Class for the content wrapper                                      |
+| `parentStyles`    | `React.CSSProperties`                                | —          | Inline styles for the parent element                               |
+| `position`        | `"top" \| "bottom" \| "left" \| "right"`             | `"bottom"` | Where the popover appears relative to trigger                      |
+| `axis`            | `"center" \| "top" \| "bottom" \| "left" \| "right"` | `"center"` | Axis alignment of the popover                                      |
+| `triggerType`     | `"auto" \| "manual"`                                 | `"auto"`   | Whether to trigger on interaction or control manually              |
+| `contentVisible`  | `boolean`                                            | `false`    | Show/hide popover manually (used when `triggerType` is `"manual"`) |
+| `viewOnHover`     | `boolean`                                            | `true`     | Show popover on hover instead of click (only in `auto` mode)       |
+| `closeOnClick`    | `boolean`                                            | `true`     | Close Popover when clicked in trigger                              |
+| `onWrapperBlur`   | `(e) => void`                                        | —          | Called when user clicks outside the popover                        |
+| `onStatusChanged` | `(status: boolean) => void`                          | —          | Called when Status of popover changes while `triggerType = auto`   |
+| `gap`             | `number`                                             | `10`       | Used to decide the gap between trigger and content                 |
 
 ---
 
