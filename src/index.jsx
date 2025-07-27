@@ -37,7 +37,7 @@ const Popover = ({
         "data-rpx__name": "popover-trigger",
         tabIndex: 0,
         onClick: () =>
-            triggerType === "auto"
+            triggerType === "auto" && !viewOnHover
                 ? setPopoverOpened((prev) => (closeOnClick ? !prev : true))
                 : children.props.onClick?.(),
         onMouseEnter: () =>
