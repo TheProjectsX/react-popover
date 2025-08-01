@@ -1,5 +1,4 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import "./index.css";
 
 const Popover = ({
@@ -17,7 +16,6 @@ const Popover = ({
     onStatusChanged = (status) => {},
     gap = 8,
 }) => {
-    const [mounted, setMounted] = useState(null);
     const [popoverOpened, setPopoverOpened] = useState(false);
 
     const wrapperRef = useRef(null);
@@ -50,6 +48,23 @@ const Popover = ({
                 : children.props.onMouseLeave?.(),
     });
 
+    // Utils
+    const isEqual = (obj1, obj2) => {
+        const keys1 = Object.keys(obj1);
+        const keys2 = Object.keys(obj2);
+        if (keys1.length !== keys2.length) return false;
+        return keys1.every(
+            (key) => obj2.hasOwnProperty(key) && obj1[key] === obj2[key]
+        );
+    };
+
+    const isSameAxis = (position, axis) =>
+        (["top", "bottom"].includes(position) &&
+            ["top", "bottom"].includes(axis)) ||
+        (["left", "right"].includes(position) &&
+            ["left", "right"].includes(axis));
+
+    // Calculators
     const calculatePosition = (position, gap, triggerRect, contentRect) => {
         const innerWidth = window.innerWidth;
         const innerHeight = window.innerHeight;
@@ -110,18 +125,18 @@ const Popover = ({
         return position;
     };
 
-    const calculateAxis = (axis, triggerRect, contentRect) => {
+    const calculateAxis = (axis, position, triggerRect, contentRect) => {
         const innerWidth = window.innerWidth;
         const innerHeight = window.innerHeight;
 
-        const oppositePosition = {
+        const oppositeAxis = {
             top: "bottom",
             bottom: "top",
             left: "right",
             right: "left",
         };
 
-        const possiblePositions = [];
+        const possibleAxes = [];
 
         const endingPos = {
             top: triggerRect.top + contentRect.height,
@@ -131,27 +146,30 @@ const Popover = ({
         };
 
         if (endingPos.top < innerHeight) {
-            possiblePositions.push("top");
+            possibleAxes.push("top");
         }
 
         if (endingPos.bottom > 0) {
-            possiblePositions.push("bottom");
+            possibleAxes.push("bottom");
         }
 
         if (endingPos.left < innerWidth) {
-            possiblePositions.push("left");
+            possibleAxes.push("left");
         }
 
         if (endingPos.right > 0) {
-            possiblePositions.push("right");
+            possibleAxes.push("right");
         }
 
-        if (possiblePositions.includes(axis)) return axis;
+        if (possibleAxes.every((axis) => isSameAxis(position, axis)))
+            return axis;
 
-        if (possiblePositions.includes(oppositePosition[axis]))
-            return oppositePosition[axis];
+        if (possibleAxes.includes(axis)) return axis;
 
-        if (possiblePositions.length > 0) return possiblePositions[0];
+        if (possibleAxes.includes(oppositeAxis[axis]))
+            return oppositeAxis[axis];
+
+        if (possibleAxes.length > 0) return possibleAxes[0];
 
         if (axis === "top" || axis === "bottom") {
             const topSpace = innerHeight - endingPos.top;
@@ -170,15 +188,7 @@ const Popover = ({
         return axis;
     };
 
-    const isEqual = (obj1, obj2) => {
-        const keys1 = Object.keys(obj1);
-        const keys2 = Object.keys(obj2);
-        if (keys1.length !== keys2.length) return false;
-        return keys1.every(
-            (key) => obj2.hasOwnProperty(key) && obj1[key] === obj2[key]
-        );
-    };
-
+    // Main func to calculate and update positons
     const updatePositions = () => {
         const triggerRect = triggerRef.current?.getBoundingClientRect();
         const contentRect = contentRef.current?.getBoundingClientRect();
@@ -221,16 +231,10 @@ const Popover = ({
 
         popoverContentStyles[isVertical ? "top" : "left"] = `${relativePos}px`;
 
-        const isSameAxis =
-            (["top", "bottom"].includes(position) &&
-                ["top", "bottom"].includes(axis)) ||
-            (["left", "right"].includes(position) &&
-                ["left", "right"].includes(axis));
-
         const axisToUse =
-            axis === "center" || isSameAxis
+            axis === "center" || isSameAxis(position, axis)
                 ? "center"
-                : calculateAxis(axis, triggerRect, contentRect);
+                : calculateAxis(axis, position, triggerRect, contentRect);
 
         let relativeAxis;
 
@@ -325,11 +329,6 @@ const Popover = ({
         };
     }, [popoverOpened, contentVisible, triggerType]);
 
-    // Set Mounted so that we can use `document`
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
     // On Status Changed
     useEffect(() => {
         onStatusChanged(popoverOpened);
@@ -344,29 +343,22 @@ const Popover = ({
             ref={wrapperRef}
         >
             {clonedTrigger}
-
-            {mounted &&
-                createPortal(
-                    <div
-                        data-rpx__name="popover-content"
-                        className={`rpx__content ${
-                            triggerType === "auto"
-                                ? "rpx__content--visible-controlled"
-                                : contentVisible
-                                ? "rpx__content--visible"
-                                : "rpx__content--invisible"
-                        } ${
-                            viewOnHover ? "rpx__content--on-hover" : ""
-                        } ${className}`}
-                        style={popoverStyle.content}
-                        ref={contentRef}
-                        data-popover-visible={popoverOpened}
-                        tabIndex={0}
-                    >
-                        {content ?? ""}
-                    </div>,
-                    document.body
-                )}
+            <div
+                data-rpx__name="popover-content"
+                className={`rpx__content ${
+                    triggerType === "auto"
+                        ? "rpx__content--visible-controlled"
+                        : contentVisible
+                        ? "rpx__content--visible"
+                        : "rpx__content--invisible"
+                } ${viewOnHover ? "rpx__content--on-hover" : ""} ${className}`}
+                style={popoverStyle.content}
+                ref={contentRef}
+                data-popover-visible={popoverOpened}
+                tabIndex={0}
+            >
+                {content ?? ""}
+            </div>
         </div>
     );
 };
