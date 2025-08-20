@@ -8,6 +8,10 @@ A lightweight and flexible React Popover / Tooltip component.
 
 ---
 
+## 🌐 Demo
+
+Checkout [Demo of react-popover](https://modasser.is-a.dev/react-popover/)
+
 ## 🚀 Installation
 
 ```bash
